@@ -1,10 +1,13 @@
 {
   inputs.nixpkgs.url = "nixpkgs";
+  inputs.nixpkgs52.url = "github:nixos/nixpkgs/cde67612b26";
+
   description = "2020 qemu advent calendar";
-  outputs = { self, nixpkgs, ... }:
+  outputs = { self, nixpkgs, nixpkgs52, ... }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      pkgs52 = import nixpkgs52 { inherit system; };
       day01 = with pkgs;
         stdenv.mkDerivation {
           name = "2020 qemu-advent-day01";
@@ -123,6 +126,91 @@
           '';
         };
 
+      day09 = with pkgs;
+        stdenv.mkDerivation {
+          name = "2020 qemu-advent-day09";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day09.tar.xz";
+            hash = "sha256-DUF/WsH611fvyJhP9fH6EwcSUTR0hOinf5vL7XhilRw=";
+          };
+          patches = [ ];
+          buildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out
+            cp -r * $out
+          '';
+        };
+
+      day11 = with pkgs52;
+        stdenv.mkDerivation {
+          name = "qemu-advent-day11";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/milky.tar.gz";
+            hash = "sha256-UW6PJ5vFiOZeNiuK/g+ua66Bh3nC4+Lp3JaXvrm931o=";
+          };
+          patches = [ ];
+          buildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out
+            cp -r * $out
+          '';
+        };
+
+      nbdkit = with pkgs;
+        stdenv.mkDerivation {
+          name = "nbdkit";
+          src = fetchFromGitLab {
+            owner = "nbdkit";
+            repo = "nbdkit";
+            rev = "3e4c1b79a72970c17cb42b21070e61ec634a38bb";
+            hash = "sha256-5ZJSwS2crjmts5s0Rk2A+g1drXkoop6Fq/qTZcB5W6Y=";
+          };
+          nativeBuildInputs = [
+            autoreconfHook
+            pkg-config
+            m4
+            libtool
+            automake
+            autoconf
+            zlib
+            gnutls
+            cryptsetup
+            libssh
+            xz
+          ];
+          buildPhase = "make";
+          configurePhase = "./configure";
+          autoreconfPhase = "autoreconf -i";
+          buildInputs = [ gnutls cryptsetup ];
+        };
+
+      nbdkit2 = with pkgs;
+        stdenv.mkDerivation {
+          src = fetchurl {
+            url =
+              "https://download.libguestfs.org/nbdkit/1.34-stable/nbdkit-1.34.0.tar.gz";
+            hash = "sha256-vnXnRtRTdVzvLlQuX5by8vRUP5wXRRUm5SBUXo1SlZo=";
+
+          };
+          name = "nbdkit2";
+          nativeBuildInputs = [
+            autoreconfHook
+            pkg-config
+            m4
+            libtool
+            automake
+            autoconf
+            zlib
+            gnutls
+            cryptsetup
+            libssh
+            xz
+          ];
+          buildInputs = [ gnutls cryptsetup ];
+        };
+
     in {
       apps.${system} = {
         day01 = {
@@ -130,11 +218,13 @@
           type = "app";
           description = "snake game in 893 bytes";
         };
+
         day03 = {
           program = "${day03}/run.sh";
           type = "app";
           description = "donkey bas in MSDOS basic";
         };
+
         day04 = {
           program = "${day04}/run.sh";
           type = "app";
@@ -142,6 +232,7 @@
             bootRogue, a roguelike game that fits in a boot sector
                       (511 bytes) by Oscar Toledo G.'';
         };
+
         day05 = {
           program = "${day05}/run.sh";
           type = "app";
@@ -149,6 +240,7 @@
             lights, a memory game that fits in a boot sector (512 bytes) by Oscar
                       Toledo G.'';
         };
+
         day06 = {
           program = "${day06}/run.sh";
           type = "app";
@@ -156,6 +248,7 @@
             BootMine, Bootable minesweeper game in a 512-byte boot sector by
                         BLevy'';
         };
+
         day07 = {
           program = "${day07}/run.sh";
           type = "app";
@@ -163,6 +256,7 @@
             Visopsys is a hobby graphical, network-capable
                       alternative operating system released under the GPL.'';
         };
+
         day08 = {
           program = "${day08}/run.sh";
           type = "app";
@@ -170,10 +264,30 @@
             Fountain.bin is a demo created as an entry into an irc
                       floppy assembly demo contest.'';
         };
+
+        day09 = {
+          program = "${day09}/run.sh";
+          type = "app";
+          description = ''
+            Incredible ray-tracing demo in a QEMU "data disk" in a
+                        boot loader'';
+        };
+
+        day11 = {
+          program = "${day11}/run.sh";
+          type = "app";
+          description = ''
+            Say good bye to LM32 (a target that has been marked as deprecated)
+                        by running the Flickernoise GUI a last time before the LM32 code
+                        gets removed.'';
+        };
       };
 
+      packages.${system} = { };
+
       devShells.${system} = {
-        inherit day01 day03 day04 day05 day06 day07 day08;
+        inherit day11 day01 day03 day04 day05 day06 day07 day08 day09 nbdkit
+          nbdkit2;
       };
     };
 }
