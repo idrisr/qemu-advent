@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index ae191ec..7c1e139 100755
+--- a/run.sh
++++ b/run.sh
+@@ -24,4 +24,4 @@ EOF
+ fi
+
+ export QEMU
+-exec $QEMU -hda lights.img
++exec $QEMU -drive file="$sdir"/lights.img,snapshot=on,format=raw

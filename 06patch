@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index a51a084..9afd20a 100755
+--- a/run.sh
++++ b/run.sh
+@@ -22,4 +22,4 @@ EOF
+ fi
+ 
+ exec $QEMU -net none \
+-           -drive file="$sdir"/bootmine.img,format=raw,if=floppy
++           -drive file="$sdir"/bootmine.img,format=raw,if=floppy,snapshot=on

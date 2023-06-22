@@ -1,0 +1,11 @@
+diff --git a/run.sh b/run.sh
+index 2d532c0..482ff2f 100755
+--- a/run.sh
++++ b/run.sh
+@@ -23,5 +23,4 @@ EOF
+     exit 1
+ fi
+ 
+-export QEMU
+-exec $QEMU -hda fountain.bin
++exec $QEMU -drive file="$sdir"/fountain.bin,snapshot=on,format=raw

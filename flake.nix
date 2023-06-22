@@ -40,19 +40,140 @@
           '';
         };
 
+      day04 = with pkgs;
+        stdenv.mkDerivation {
+          name = "2020 qemu-advent-day04";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day04.tar.gz";
+            hash = "sha256-toVrFbbsZxh8BdGjzKMUyetbRAu1ktk883u7in4cY68=";
+          };
+
+          patches = [ ./04patch ];
+          buildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out
+            cp -r * $out
+          '';
+        };
+
+      day05 = with pkgs;
+        stdenv.mkDerivation {
+          name = "2020 qemu-advent-day05";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day05.tar.gz";
+            hash = "sha256-ccmRndhPQFA+vaFX6AMrfWtuAS9AkHov4hrWNWuN/po=";
+
+          };
+
+          patches = [ ./05patch ];
+          buildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out
+            cp -r * $out
+          '';
+        };
+      day06 = with pkgs;
+        stdenv.mkDerivation {
+          name = "2022 qemu-advent-day06";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day06.tar.gz";
+            hash = "sha256-HkhQMv6hG/61wxV6uTQDTTCYfYLMW8kl2aKQdLc56T4=";
+          };
+
+          patches = [ ./06patch ];
+          buildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out
+            cp -r * $out
+          '';
+        };
+
+      day07 = with pkgs;
+        stdenv.mkDerivation {
+          name = "2020 qemu-advent-day07";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day07.tar.gz";
+            hash = "sha256-lnLql/1dWXvXG6ZeZAqg12WCQiacoW3G8ofgIkWVqYA=";
+          };
+          patches = [ ./07patch ];
+          buildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out
+            cp -r * $out
+          '';
+        };
+
+      day08 = with pkgs;
+        stdenv.mkDerivation {
+          name = "2020 qemu-advent-day08";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day08.tar.gz";
+            hash = "sha256-qR9YAIdXuwoM9sn7jVMN/eikpBvPZ4UaB+TzFtogVfo=";
+          };
+          patches = [ ./08patch ];
+          buildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out
+            cp -r * $out
+          '';
+        };
+
     in {
       apps.${system} = {
         day01 = {
           program = "${day01}/run.sh";
           type = "app";
-          description = "snake game";
+          description = "snake game in 893 bytes";
         };
         day03 = {
           program = "${day03}/run.sh";
           type = "app";
+          description = "donkey bas in MSDOS basic";
+        };
+        day04 = {
+          program = "${day04}/run.sh";
+          type = "app";
+          description = ''
+            bootRogue, a roguelike game that fits in a boot sector
+                      (511 bytes) by Oscar Toledo G.'';
+        };
+        day05 = {
+          program = "${day05}/run.sh";
+          type = "app";
+          description = ''
+            lights, a memory game that fits in a boot sector (512 bytes) by Oscar
+                      Toledo G.'';
+        };
+        day06 = {
+          program = "${day06}/run.sh";
+          type = "app";
+          description = ''
+            BootMine, Bootable minesweeper game in a 512-byte boot sector by
+                        BLevy'';
+        };
+        day07 = {
+          program = "${day07}/run.sh";
+          type = "app";
+          description = ''
+            Visopsys is a hobby graphical, network-capable
+                      alternative operating system released under the GPL.'';
+        };
+        day08 = {
+          program = "${day08}/run.sh";
+          type = "app";
+          description = ''
+            Fountain.bin is a demo created as an entry into an irc
+                      floppy assembly demo contest.'';
         };
       };
 
-      devShells.${system} = { inherit day01 day03; };
+      devShells.${system} = {
+        inherit day01 day03 day04 day05 day06 day07 day08;
+      };
     };
 }

@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index 1e9108d..3063375 100755
+--- a/run.sh
++++ b/run.sh
+@@ -24,4 +24,4 @@ EOF
+ fi
+ 
+ export QEMU
+-exec $QEMU -hda visopsys-0.9-usb.img -nic model=pcnet
++exec $QEMU -drive file="$sdir"/visopsys-0.9-usb.img,snapshot=on,format=raw -nic model=pcnet
