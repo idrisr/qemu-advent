@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index 37c986e..44ae48a 100755
+--- a/run.sh
++++ b/run.sh
+@@ -21,4 +21,4 @@ EOF
+ fi
+
+ exec $QEMU -m 16M \
+-           -drive if=ide,format=qcow2,file="$sdir/gwbasic.qcow2"
++           -drive if=ide,snapshot=on,format=qcow2,file="$sdir/gwbasic.qcow2"
