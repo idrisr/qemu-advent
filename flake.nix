@@ -13,6 +13,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day01.tar.gz";
             hash = "sha256-joBFhVbCqibSx2r1eb9Tyme5Rgz+MiY9vARK5HnI8VU=";
           };
+          patches = [ ./readonly.patch ];
 
           buildPhase = "";
           buildInputs = [ qemu ];
