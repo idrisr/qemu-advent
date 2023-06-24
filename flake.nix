@@ -1,6 +1,7 @@
 {
   inputs.nixpkgs.url = "nixpkgs";
-  inputs.nixpkgs52.url = "github:nixos/nixpkgs/cde67612b26";
+  inputs.nixpkgs52.url =
+    "github:nixos/nixpkgs/08adc0781104813a3d44936ab7c318b751aa43c0";
 
   description = "2020 qemu advent calendar";
   outputs = { self, nixpkgs, nixpkgs52, ... }:
@@ -142,21 +143,45 @@
           '';
         };
 
-      day11 = with pkgs52;
-        stdenv.mkDerivation {
-          name = "qemu-advent-day11";
+      qemu-custom = with pkgs;
+        stdenv.mkDerivation rec {
+          pname = "qemu-custom";
+          version = "1.0";
+
           src = fetchurl {
-            url =
-              "https://www.qemu-advent-calendar.org/2020/download/milky.tar.gz";
-            hash = "sha256-UW6PJ5vFiOZeNiuK/g+ua66Bh3nC4+Lp3JaXvrm931o=";
+            url = "https://download.qemu.org/qemu-5.2.0.tar.xz";
+            sha256 = "sha256-yxjYibYo++Y3ZysDJnidmw47gCfgRFuTZTfHhUnfF7w=";
           };
-          patches = [ ];
-          buildInputs = [ qemu ];
+
+          buildInputs = [ coreutils glib pkg-config makeWrapper python3 ninja ];
+          makeFlags = [ "TARGET_LIST=lm32-softmmu" ];
+
+          configurePhase = ''
+            ./configure --target-list=$TARGET_LIST --prefix=$out
+          '';
+
+          buildPhase = ''
+            make -j $NIX_BUILD_CORES
+          '';
+
           installPhase = ''
-            mkdir -p $out
-            cp -r * $out
+            make install
           '';
         };
+
+      day11 = let
+        img = pkgs.fetchurl {
+          hash = "sha256-ZOI+V+/85gKzKnPRbUDQ0ZUnvdJ03IirGatoVJYr/bU=";
+          url = "http://milkymist.walle.cc/updates/2012-03-01/flickernoise";
+        };
+      in pkgs.writeShellApplication {
+        name = "milkmist";
+        runtimeInputs =
+          [ (pkgs52.qemu.override { hostCpuTargets = [ "lm32-softmmu" ]; }) ];
+        text = ''
+          qemu-system-lm32 -M milkymist -kernel ${img}
+        '';
+      };
 
       nbdkit = with pkgs;
         stdenv.mkDerivation {
@@ -274,7 +299,7 @@
         };
 
         day11 = {
-          program = "${day11}/run.sh";
+          program = "${day11}/bin/milkmist";
           type = "app";
           description = ''
             Say good bye to LM32 (a target that has been marked as deprecated)
@@ -283,11 +308,11 @@
         };
       };
 
-      packages.${system} = { };
+      packages.${system} = { inherit qemu-custom day11; };
 
       devShells.${system} = {
         inherit day11 day01 day03 day04 day05 day06 day07 day08 day09 nbdkit
-          nbdkit2;
+          nbdkit2 qemu-custom;
       };
     };
 }
