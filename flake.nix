@@ -11,21 +11,29 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
       pkgs52 = import nixpkgs52 { inherit system; };
-      day01 = with pkgs;
-        stdenv.mkDerivation {
-          name = "2020 qemu-advent-day01";
-          src = fetchurl {
-            url =
-              "https://www.qemu-advent-calendar.org/2020/download/day01.tar.gz";
-            hash = "sha256-joBFhVbCqibSx2r1eb9Tyme5Rgz+MiY9vARK5HnI8VU=";
-          };
-          patches = [ ./01patch ];
 
-          buildPhase = "";
-          buildInputs = [ qemu ];
-          installPhase = ''
-            mkdir -p $out
-            cp -r * $out
+      day01 = with pkgs;
+        let
+          a = stdenv.mkDerivation {
+            name = "2020 qemu-advent-day01";
+            src = fetchurl {
+              url =
+                "https://www.qemu-advent-calendar.org/2020/download/day01.tar.gz";
+              hash = "sha256-joBFhVbCqibSx2r1eb9Tyme5Rgz+MiY9vARK5HnI8VU=";
+            };
+            patches = [ ./01patch ];
+
+            buildInputs = [ qemu ];
+            installPhase = ''
+              mkdir -p $out
+              cp -r * $out
+            '';
+          };
+        in writeShellApplication {
+          name = "day01";
+          runtimeInputs = [ qemu ];
+          text = ''
+            exec ${a}/run.sh
           '';
         };
 
@@ -39,7 +47,6 @@
           };
 
           patches = [ ./03patch ];
-          buildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out
             cp -r * $out
@@ -56,7 +63,6 @@
           };
 
           patches = [ ./04patch ];
-          buildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out
             cp -r * $out
@@ -72,14 +78,13 @@
             hash = "sha256-ccmRndhPQFA+vaFX6AMrfWtuAS9AkHov4hrWNWuN/po=";
 
           };
-
           patches = [ ./05patch ];
-          buildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out
             cp -r * $out
           '';
         };
+
       day06 = with pkgs;
         stdenv.mkDerivation {
           name = "2022 qemu-advent-day06";
@@ -88,9 +93,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day06.tar.gz";
             hash = "sha256-HkhQMv6hG/61wxV6uTQDTTCYfYLMW8kl2aKQdLc56T4=";
           };
-
           patches = [ ./06patch ];
-          buildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out
             cp -r * $out
@@ -106,7 +109,6 @@
             hash = "sha256-lnLql/1dWXvXG6ZeZAqg12WCQiacoW3G8ofgIkWVqYA=";
           };
           patches = [ ./07patch ];
-          buildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out
             cp -r * $out
@@ -122,7 +124,6 @@
             hash = "sha256-qR9YAIdXuwoM9sn7jVMN/eikpBvPZ4UaB+TzFtogVfo=";
           };
           patches = [ ./08patch ];
-          buildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out
             cp -r * $out
@@ -130,19 +131,51 @@
         };
 
       day09 = with pkgs;
-        stdenv.mkDerivation {
-          name = "2020 qemu-advent-day09";
-          src = fetchurl {
-            url =
-              "https://www.qemu-advent-calendar.org/2020/download/day09.tar.xz";
-            hash = "sha256-DUF/WsH611fvyJhP9fH6EwcSUTR0hOinf5vL7XhilRw=";
+        let
+          a = stdenv.mkDerivation {
+            name = "2020 qemu-advent-day09";
+            src = fetchurl {
+              url =
+                "https://www.qemu-advent-calendar.org/2020/download/day09.tar.xz";
+              hash = "sha256-DUF/WsH611fvyJhP9fH6EwcSUTR0hOinf5vL7XhilRw=";
+            };
+            # patches = [ ./09patch ];
+            nativeBuildInputs = [ qemu makeWrapper ];
+            installPhase = ''
+              mkdir -p $out
+              cp -r * $out
+            '';
           };
-          patches = [ ];
-          buildInputs = [ qemu ];
-          installPhase = ''
-            mkdir -p $out
-            cp -r * $out
+        in writeShellApplication {
+          name = "day09";
+          runtimeInputs = [ nbdkit qemu ];
+          text = ''
+            exec ${a}/run.sh
           '';
+        };
+
+      nbdkit = with pkgs;
+        stdenv.mkDerivation {
+          name = "nbdkit";
+          src = fetchFromGitLab {
+            owner = "nbdkit";
+            repo = "nbdkit";
+            rev = "3e4c1b79a72970c17cb42b21070e61ec634a38bb";
+            hash = "sha256-5ZJSwS2crjmts5s0Rk2A+g1drXkoop6Fq/qTZcB5W6Y=";
+          };
+
+          nativeBuildInputs =
+            [ autoconf automake autoreconfHook libtool pkg-config python3 ];
+
+          configureFlags = [
+            "--without-manpages"
+            "--without-ssh"
+            "--without-gnutls"
+            "--disable-perl"
+          ];
+
+          postPatch = "patchShebangs .";
+          autoreconfPhase = "autoreconf -i";
         };
 
       day11 = let
@@ -159,63 +192,10 @@
         '';
       };
 
-      nbdkit = with pkgs;
-        stdenv.mkDerivation {
-          name = "nbdkit";
-          src = fetchFromGitLab {
-            owner = "nbdkit";
-            repo = "nbdkit";
-            rev = "3e4c1b79a72970c17cb42b21070e61ec634a38bb";
-            hash = "sha256-5ZJSwS2crjmts5s0Rk2A+g1drXkoop6Fq/qTZcB5W6Y=";
-          };
-          nativeBuildInputs = [
-            autoreconfHook
-            pkg-config
-            m4
-            libtool
-            automake
-            autoconf
-            zlib
-            gnutls
-            cryptsetup
-            libssh
-            xz
-          ];
-          buildPhase = "make";
-          configurePhase = "./configure";
-          autoreconfPhase = "autoreconf -i";
-          buildInputs = [ gnutls cryptsetup ];
-        };
-
-      nbdkit2 = with pkgs;
-        stdenv.mkDerivation {
-          src = fetchurl {
-            url =
-              "https://download.libguestfs.org/nbdkit/1.34-stable/nbdkit-1.34.0.tar.gz";
-            hash = "sha256-vnXnRtRTdVzvLlQuX5by8vRUP5wXRRUm5SBUXo1SlZo=";
-
-          };
-          name = "nbdkit2";
-          nativeBuildInputs = [
-            autoreconfHook
-            pkg-config
-            m4
-            libtool
-            automake
-            autoconf
-            zlib
-            gnutls
-            cryptsetup
-            libssh
-            xz
-          ];
-          buildInputs = [ gnutls cryptsetup ];
-        };
-
     in {
       apps.${system} = {
         day01 = {
-          program = "${day01}/run.sh";
+          program = "${day01}/bin/day01";
           type = "app";
           description = "snake game in 893 bytes";
         };
@@ -262,21 +242,21 @@
         };
 
         day09 = {
-          program = "${day09}/run.sh";
+          program = "${day09}/bin/day09";
           type = "app";
           description = ''
             Incredible ray-tracing demo in a QEMU "data disk" in a boot loader'';
         };
 
         day11 = {
-          program = "${day11}/bin/milkmist";
+          program = "${day11}/bin/day11";
           type = "app";
           description =
             "Say good bye to LM32 (a target that has been marked as deprecated) by running the Flickernoise GUI a last time before the LM32 code gets removed.";
         };
       };
 
-      packages.${system} = { };
-      devShells.${system} = { };
+      packages.${system} = { inherit day01; };
+      devShells.${system} = { inherit day01 day09; };
     };
 }

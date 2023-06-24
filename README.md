@@ -33,3 +33,8 @@ nix flake show github:idrisr/qemu-advent
 * grep nixpkgs to find examples
 * nixos discourse and nix irc is a friendly place
 * get good (better) with bash as it's a strong prereq for going deeper
+* watch out for shebangs. theyll blow up your build.
+* even `nix develop --ignore-environment --command bash --norc` is not a pure sandbox
+* beware false positives. i had qemu running as a service on my machine
+    * without that it was broken
+    * see makewrapper?
