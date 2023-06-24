@@ -1,5 +1,7 @@
 {
   inputs.nixpkgs.url = "nixpkgs";
+
+  # latest qemu with support of lm32
   inputs.nixpkgs52.url =
     "github:nixos/nixpkgs/08adc0781104813a3d44936ab7c318b751aa43c0";
 
@@ -143,32 +145,6 @@
           '';
         };
 
-      qemu-custom = with pkgs;
-        stdenv.mkDerivation rec {
-          pname = "qemu-custom";
-          version = "1.0";
-
-          src = fetchurl {
-            url = "https://download.qemu.org/qemu-5.2.0.tar.xz";
-            sha256 = "sha256-yxjYibYo++Y3ZysDJnidmw47gCfgRFuTZTfHhUnfF7w=";
-          };
-
-          buildInputs = [ coreutils glib pkg-config makeWrapper python3 ninja ];
-          makeFlags = [ "TARGET_LIST=lm32-softmmu" ];
-
-          configurePhase = ''
-            ./configure --target-list=$TARGET_LIST --prefix=$out
-          '';
-
-          buildPhase = ''
-            make -j $NIX_BUILD_CORES
-          '';
-
-          installPhase = ''
-            make install
-          '';
-        };
-
       day11 = let
         img = pkgs.fetchurl {
           hash = "sha256-ZOI+V+/85gKzKnPRbUDQ0ZUnvdJ03IirGatoVJYr/bU=";
@@ -253,66 +229,54 @@
         day04 = {
           program = "${day04}/run.sh";
           type = "app";
-          description = ''
-            bootRogue, a roguelike game that fits in a boot sector
-                      (511 bytes) by Oscar Toledo G.'';
+          description =
+            "bootRogue, a roguelike game that fits in a boot sector (511 bytes) by Oscar Toledo G.";
         };
 
         day05 = {
           program = "${day05}/run.sh";
           type = "app";
-          description = ''
-            lights, a memory game that fits in a boot sector (512 bytes) by Oscar
-                      Toledo G.'';
+          description =
+            "lights, a memory game that fits in a boot sector (512 bytes) by Oscar Toledo G.";
         };
 
         day06 = {
           program = "${day06}/run.sh";
           type = "app";
-          description = ''
-            BootMine, Bootable minesweeper game in a 512-byte boot sector by
-                        BLevy'';
+          description =
+            "BootMine, Bootable minesweeper game in a 512-byte boot sector by BLevy";
         };
 
         day07 = {
           program = "${day07}/run.sh";
           type = "app";
-          description = ''
-            Visopsys is a hobby graphical, network-capable
-                      alternative operating system released under the GPL.'';
+          description =
+            "Visopsys is a hobby graphical, network-capable alternative operating system released under the GPL.";
         };
 
         day08 = {
           program = "${day08}/run.sh";
           type = "app";
-          description = ''
-            Fountain.bin is a demo created as an entry into an irc
-                      floppy assembly demo contest.'';
+          description =
+            "Fountain.bin is a demo created as an entry into an irc floppy assembly demo contest.";
         };
 
         day09 = {
           program = "${day09}/run.sh";
           type = "app";
           description = ''
-            Incredible ray-tracing demo in a QEMU "data disk" in a
-                        boot loader'';
+            Incredible ray-tracing demo in a QEMU "data disk" in a boot loader'';
         };
 
         day11 = {
           program = "${day11}/bin/milkmist";
           type = "app";
-          description = ''
-            Say good bye to LM32 (a target that has been marked as deprecated)
-                        by running the Flickernoise GUI a last time before the LM32 code
-                        gets removed.'';
+          description =
+            "Say good bye to LM32 (a target that has been marked as deprecated) by running the Flickernoise GUI a last time before the LM32 code gets removed.";
         };
       };
 
-      packages.${system} = { inherit qemu-custom day11; };
-
-      devShells.${system} = {
-        inherit day11 day01 day03 day04 day05 day06 day07 day08 day09 nbdkit
-          nbdkit2 qemu-custom;
-      };
+      packages.${system} = { };
+      devShells.${system} = { };
     };
 }

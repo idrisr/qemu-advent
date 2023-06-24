@@ -20,3 +20,16 @@ are included as part of this flake.  To see which ones are available, run
 ```
 nix flake show github:idrisr/qemu-advent
 ```
+
+## lessons learned
+* use patches
+* use prior nixpkgs for deprecated things
+* download shas make things feel safer
+* use nix expression language to simplify
+* share nix flakes to allow easy reproduction of issue
+* autoconf is a beast, but makes things easier
+* read derivation expressions to find the tweak you need. often via overrides
+* use `nix develop` to debug and trial run
+* grep nixpkgs to find examples
+* nixos discourse and nix irc is a friendly place
+* get good (better) with bash as it's a strong prereq for going deeper
