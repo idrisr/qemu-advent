@@ -38,3 +38,7 @@ nix flake show github:idrisr/qemu-advent
 * beware false positives. i had qemu running as a service on my machine
     * without that it was broken
     * see makewrapper?
+* string escaping between nix and bash is treacherous
+* always stay aware of what's happening with $PATH. that's the whole game
+* you can know nothing about a project and its language ecosystem
+    * and still make a package for it

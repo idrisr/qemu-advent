@@ -36,7 +36,6 @@
             exec ${a}/run.sh
           '';
         };
-
       day03 = with pkgs;
         stdenv.mkDerivation {
           name = "2020 qemu-advent-day03";
@@ -52,7 +51,6 @@
             cp -r * $out
           '';
         };
-
       day04 = with pkgs;
         stdenv.mkDerivation {
           name = "2020 qemu-advent-day04";
@@ -68,7 +66,6 @@
             cp -r * $out
           '';
         };
-
       day05 = with pkgs;
         stdenv.mkDerivation {
           name = "2020 qemu-advent-day05";
@@ -84,7 +81,6 @@
             cp -r * $out
           '';
         };
-
       day06 = with pkgs;
         stdenv.mkDerivation {
           name = "2022 qemu-advent-day06";
@@ -99,7 +95,6 @@
             cp -r * $out
           '';
         };
-
       day07 = with pkgs;
         stdenv.mkDerivation {
           name = "2020 qemu-advent-day07";
@@ -114,7 +109,6 @@
             cp -r * $out
           '';
         };
-
       day08 = with pkgs;
         stdenv.mkDerivation {
           name = "2020 qemu-advent-day08";
@@ -129,31 +123,34 @@
             cp -r * $out
           '';
         };
-
       day09 = with pkgs;
-        let
-          a = stdenv.mkDerivation {
-            name = "2020 qemu-advent-day09";
-            src = fetchurl {
-              url =
-                "https://www.qemu-advent-calendar.org/2020/download/day09.tar.xz";
-              hash = "sha256-DUF/WsH611fvyJhP9fH6EwcSUTR0hOinf5vL7XhilRw=";
-            };
-            # patches = [ ./09patch ];
-            nativeBuildInputs = [ qemu makeWrapper ];
-            installPhase = ''
-              mkdir -p $out
-              cp -r * $out
-            '';
+        stdenv.mkDerivation rec {
+          name = "gameoflife";
+          src = fetchFromGitHub {
+            owner = "glitzflitz";
+            repo = "gameoflife";
+            rev = "ac17b5987f845f242bc7c9f8f4aea38e8a98f92f";
+            hash = "sha256-LVYlVwwAWPuKpNcYDmyStlctS/OUa6wIhPXrPzBlp6A=";
           };
-        in writeShellApplication {
-          name = "day09";
-          runtimeInputs = [ nbdkit qemu ];
-          text = ''
-            exec ${a}/run.sh
+          cargoHash = "sha256-yBoaLqynvYC9ebC0zjd2FmSSd53xzn4ralihtCFubAw=";
+          nativeBuildInputs = [ makeWrapper qemu ];
+          postPatch = ''
+            substituteInPlace ./run.sh \
+            --replace \
+            file=gameoflife.bin \
+            file=\"$out/share/gameoflife.bin\"
+          '';
+          patches = [ ./09patch ];
+          installPhase = ''
+            mkdir -p $out/bin
+            mkdir -p $out/share
+            mv ./gameoflife.bin $out/share
+            mv ./README.md $out/bin
+            mv ./run.sh $out/bin
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : ${lib.makeBinPath nativeBuildInputs}
           '';
         };
-
       nbdkit = with pkgs;
         stdenv.mkDerivation {
           name = "nbdkit";
@@ -177,7 +174,6 @@
           postPatch = "patchShebangs .";
           autoreconfPhase = "autoreconf -i";
         };
-
       day11 = let
         img = pkgs.fetchurl {
           hash = "sha256-ZOI+V+/85gKzKnPRbUDQ0ZUnvdJ03IirGatoVJYr/bU=";
@@ -191,6 +187,28 @@
           qemu-system-lm32 -M milkymist -kernel ${img}
         '';
       };
+      day12 = with pkgs;
+        let
+          a = stdenv.mkDerivation {
+            name = "2020 qemu-advent-day12";
+            src = fetchurl {
+              url =
+                "https://www.qemu-advent-calendar.org/2020/download/day12.tar.gz";
+              hash = "sha256-FLDf6VIHu1LoVagSAbgwNj6hybh85QEl2/YbyQkrDb8=";
+            };
+            nativeBuildInputs = [ qemu ];
+            installPhase = ''
+              mkdir -p $out
+              cp -r * $out
+            '';
+          };
+        in writeShellApplication {
+          name = "day12";
+          runtimeInputs = [ qemu ];
+          text = ''
+            exec ${a}/run.sh
+          '';
+        };
 
     in {
       apps.${system} = {
@@ -242,21 +260,25 @@
         };
 
         day09 = {
-          program = "${day09}/bin/day09";
+          program = "${day09}/bin/run.sh";
           type = "app";
           description = ''
             Incredible ray-tracing demo in a QEMU "data disk" in a boot loader'';
         };
 
         day11 = {
-          program = "${day11}/bin/day11";
+          program = "${day11}/bin/milkmist";
           type = "app";
           description =
             "Say good bye to LM32 (a target that has been marked as deprecated) by running the Flickernoise GUI a last time before the LM32 code gets removed.";
         };
+        day12 = {
+          program = "${day12}/bin/day12";
+          type = "app";
+        };
       };
 
-      packages.${system} = { inherit day01; };
-      devShells.${system} = { inherit day01 day09; };
+      packages.${system} = { };
+      devShells.${system} = { };
     };
 }
