@@ -251,6 +251,27 @@
           '';
         };
 
+      day15 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day15";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day15.tar.gz";
+            hash = "sha256-+jx/hTex1iLvLeUUBNyT49GPRZg3Vg6E+uSgDNmUYuQ=";
+          };
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/{bin,share}
+            substituteInPlace ./run.sh --replace file=snow.bin file=\"$out/share/snow.bin\",snapshot=on
+            cp run.sh $out/bin
+            cp README $out/bin
+            cp snow.bin $out/share
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
     in {
       apps.${system} = {
         day01 = {
@@ -325,9 +346,13 @@
           program = "${day14}/bin/run.sh";
           type = "app";
         };
+        day15 = {
+          program = "${day15}/bin/run.sh";
+          type = "app";
+        };
       };
 
       packages.${system} = { };
-      devShells.${system} = { default = day14; };
+      devShells.${system} = { default = day15; };
     };
 }
