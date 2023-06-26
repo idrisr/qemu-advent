@@ -354,6 +354,69 @@
           '';
         };
 
+      day20 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day20";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day20.tar.gz";
+            hash = "sha256-yzMh37u97W/YuCztRAN9lHqBCn4CreVdynAKNAd5q6c=";
+          };
+          buildInputs = [ makeWrapper ];
+          patches = [ ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            substituteInPlace ./run.sh --replace if=floppy if=floppy,snapshot=on
+            cp * $out/bin
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
+      day21 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day21";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day21.tar.gz";
+            hash = "sha256-MNXqSjn3L1EKZszREibmTov/MnjKGtHNh6YjbkTgP8I=";
+          };
+          buildInputs = [ makeWrapper ];
+          patches = [ ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            substituteInPlace ./run.sh --replace vmlinuz "$out/bin/vmlinuz"
+            substituteInPlace ./run.sh --replace initramfs.linux_amd64.cpio "$out/bin/initramfs.linux_amd64.cpio"
+            cp * $out/bin
+            chmod +x $out/bin/run.sh
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
+      day22 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day22";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day22.tar.xz";
+            hash = "sha256-cQMahfdaW4RgngFEGUtK6Z576wpU5ZLb6FtrOwjY4W4=";
+          };
+          buildInputs = [ makeWrapper ];
+          patches = [ ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            substituteInPlace ./run.sh --replace ventoy.qcow2 "$out/bin/ventoy.qcow2 -snapshot"
+            cp * $out/bin
+            chmod +x $out/bin/run.sh
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
     in {
       apps.${system} = {
         day01 = {
@@ -436,9 +499,21 @@
           program = "${day19}/bin/run.sh";
           type = "app";
         };
+        day20 = {
+          program = "${day20}/bin/run.sh";
+          type = "app";
+        };
+        day21 = {
+          program = "${day21}/bin/run.sh";
+          type = "app";
+        };
+        day22 = {
+          program = "${day22}/bin/run.sh";
+          type = "app";
+        };
       };
 
       packages.${system} = { };
-      devShells.${system} = { default = day19; };
+      devShells.${system} = { default = day22; };
     };
 }
