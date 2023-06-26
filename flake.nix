@@ -210,6 +210,26 @@
           '';
         };
 
+      day13 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day13";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day13.tar.xz";
+            hash = "sha256-a8Yzob+fLaUi4fSdfDFgLaeAz+xrnqc0Igkd0V3j7F8=";
+          };
+          buildInputs = [ makeWrapper ];
+          patches = [ ./13patch ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            cp run.sh $out/bin
+            cp invaders.img $out/bin
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
     in {
       apps.${system} = {
         day01 = {
@@ -276,9 +296,13 @@
           program = "${day12}/bin/day12";
           type = "app";
         };
+        day13 = {
+          program = "${day13}/bin/run.sh";
+          type = "app";
+        };
       };
 
       packages.${system} = { };
-      devShells.${system} = { };
+      devShells.${system} = { inherit day13; };
     };
 }
