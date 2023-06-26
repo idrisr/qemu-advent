@@ -42,3 +42,4 @@ nix flake show github:idrisr/qemu-advent
 * always stay aware of what's happening with $PATH. that's the whole game
 * you can know nothing about a project and its language ecosystem
     * and still make a package for it
+* to get command line helpers, write yet another package

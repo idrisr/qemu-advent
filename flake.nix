@@ -405,12 +405,51 @@
             hash = "sha256-cQMahfdaW4RgngFEGUtK6Z576wpU5ZLb6FtrOwjY4W4=";
           };
           buildInputs = [ makeWrapper ];
-          patches = [ ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             substituteInPlace ./run.sh --replace ventoy.qcow2 "$out/bin/ventoy.qcow2 -snapshot"
             cp * $out/bin
+            chmod +x $out/bin/run.sh
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
+      day23 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day23";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day23.tar.gz";
+            hash = "sha256-rzmEOfUAuq9oyPD0AEXR+4YGh++vV7KxZnrxvzhzLUs=";
+          };
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            substituteInPlace ./run.sh --replace 'exec $QEMU' 'exec $QEMU -snapshot'
+            cp -r * $out/bin
+            chmod +x $out/bin/run.sh
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
+      day24 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day24";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/hippo.tar.gz";
+            hash = "sha256-I1GEAUEpq4BnWwQDpexBGVBGuuB/IGSgR5zFfoNyfEg=";
+          };
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            substituteInPlace ./run.sh --replace 'exec $QEMU' 'exec $QEMU -snapshot'
+            cp -r * $out/bin
             chmod +x $out/bin/run.sh
             wrapProgram $out/bin/run.sh \
               --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
@@ -424,49 +463,41 @@
           type = "app";
           description = "snake game in 893 bytes";
         };
-
         day03 = {
           program = "${day03}/run.sh";
           type = "app";
           description = "donkey bas in MSDOS basic";
         };
-
         day04 = {
           program = "${day04}/run.sh";
           type = "app";
           description =
             "bootRogue, a roguelike game that fits in a boot sector (511 bytes) by Oscar Toledo G.";
         };
-
         day05 = {
           program = "${day05}/run.sh";
           type = "app";
           description =
             "lights, a memory game that fits in a boot sector (512 bytes) by Oscar Toledo G.";
         };
-
         day06 = {
           program = "${day06}/run.sh";
           type = "app";
           description =
             "BootMine, Bootable minesweeper game in a 512-byte boot sector by BLevy";
         };
-
         day07 = {
           program = "${day07}/run.sh";
           type = "app";
         };
-
         day08 = {
           program = "${day08}/run.sh";
           type = "app";
         };
-
         day09 = {
           program = "${day09}/bin/run.sh";
           type = "app";
         };
-
         day11 = {
           program = "${day11}/bin/milkmist";
           type = "app";
@@ -511,9 +542,17 @@
           program = "${day22}/bin/run.sh";
           type = "app";
         };
+        day23 = {
+          program = "${day23}/bin/run.sh";
+          type = "app";
+        };
+        day24 = {
+          program = "${day24}/bin/run.sh";
+          type = "app";
+        };
       };
 
       packages.${system} = { };
-      devShells.${system} = { default = day22; };
+      devShells.${system} = { default = day24; };
     };
 }
