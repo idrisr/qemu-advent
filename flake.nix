@@ -11,6 +11,10 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
       pkgs52 = import nixpkgs52 { inherit system; };
+      makeapp = day: {
+        program = "${day}/bin/run.sh";
+        type = "app";
+      };
 
       day01 = with pkgs;
         stdenv.mkDerivation rec {
@@ -21,7 +25,8 @@
             hash = "sha256-joBFhVbCqibSx2r1eb9Tyme5Rgz+MiY9vARK5HnI8VU=";
           };
           patches = [ ./01patch ];
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp -r * $out/bin
@@ -38,9 +43,9 @@
               "https://www.qemu-advent-calendar.org/2020/download/gw-basic.tar.xz";
             hash = "sha256-D1GSCLq7PytB1FI9i81toCbzlkZ57dA5iqHdLhx1T2U=";
           };
-
           patches = [ ./03patch ];
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp -r * $out/bin
@@ -57,9 +62,9 @@
               "https://www.qemu-advent-calendar.org/2020/download/day04.tar.gz";
             hash = "sha256-toVrFbbsZxh8BdGjzKMUyetbRAu1ktk883u7in4cY68=";
           };
-
           patches = [ ./04patch ];
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp -r * $out/bin
@@ -78,7 +83,8 @@
 
           };
           patches = [ ./05patch ];
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp -r * $out/bin
@@ -96,7 +102,8 @@
             hash = "sha256-HkhQMv6hG/61wxV6uTQDTTCYfYLMW8kl2aKQdLc56T4=";
           };
           patches = [ ./06patch ];
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp -r * $out/bin
@@ -114,7 +121,8 @@
             hash = "sha256-lnLql/1dWXvXG6ZeZAqg12WCQiacoW3G8ofgIkWVqYA=";
           };
           patches = [ ./07patch ];
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp -r * $out/bin
@@ -132,7 +140,8 @@
             hash = "sha256-qR9YAIdXuwoM9sn7jVMN/eikpBvPZ4UaB+TzFtogVfo=";
           };
           patches = [ ./08patch ];
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp -r * $out/bin
@@ -143,6 +152,24 @@
 
       day09 = with pkgs;
         stdenv.mkDerivation rec {
+          name = "2020 qemu-advent-day09";
+          src = fetchurl {
+            url =
+              "http://www.qemu-advent-calendar.org/2020/download/day09.tar.xz";
+            hash = "sha256-DUF/WsH611fvyJhP9fH6EwcSUTR0hOinf5vL7XhilRw=";
+          };
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ nbdkit qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            cp -r * $out/bin
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
+      day12 = with pkgs;
+        stdenv.mkDerivation rec {
           name = "gameoflife";
           src = fetchFromGitHub {
             owner = "glitzflitz";
@@ -151,7 +178,8 @@
             hash = "sha256-LVYlVwwAWPuKpNcYDmyStlctS/OUa6wIhPXrPzBlp6A=";
           };
           cargoHash = "sha256-yBoaLqynvYC9ebC0zjd2FmSSd53xzn4ralihtCFubAw=";
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           postPatch = ''
             substituteInPlace ./run.sh \
             --replace \
@@ -179,8 +207,7 @@
             rev = "3e4c1b79a72970c17cb42b21070e61ec634a38bb";
             hash = "sha256-5ZJSwS2crjmts5s0Rk2A+g1drXkoop6Fq/qTZcB5W6Y=";
           };
-          nativeBuildInputs =
-            [ autoconf automake autoreconfHook libtool pkg-config python3 ];
+          autoreconfPhase = "autoreconf -i";
           configureFlags = [
             "--without-manpages"
             "--without-ssh"
@@ -188,7 +215,8 @@
             "--disable-perl"
           ];
           postPatch = "patchShebangs .";
-          autoreconfPhase = "autoreconf -i";
+          nativeBuildInputs =
+            [ autoconf automake autoreconfHook libtool pkg-config python3 ];
         };
 
       day11 = let
@@ -205,25 +233,6 @@
         '';
       };
 
-      day12 = with pkgs;
-        stdenv.mkDerivation rec {
-          name = "2020 qemu-advent-day12";
-          src = fetchurl {
-            url =
-              "https://www.qemu-advent-calendar.org/2020/download/day12.tar.gz";
-            hash = "sha256-FLDf6VIHu1LoVagSAbgwNj6hybh85QEl2/YbyQkrDb8=";
-          };
-          nativeBuildInputs = [ makeWrapper qemu ];
-          installPhase = ''
-            mkdir -p $out/{bin,share}
-            substituteInPlace run.sh --replace file=gameoflife.bin file=\"$out/share/gameoflife.bin\",snapshot=on
-            mv gameoflife.bin $out/share
-            cp -r * $out/bin
-            wrapProgram $out/bin/run.sh \
-              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
-          '';
-        };
-
       day13 = with pkgs;
         stdenv.mkDerivation rec {
           name = "day13";
@@ -233,7 +242,8 @@
             hash = "sha256-a8Yzob+fLaUi4fSdfDFgLaeAz+xrnqc0Igkd0V3j7F8=";
           };
           patches = [ ./13patch ];
-          nativeBuildInputs = [ qemu makeWrapper ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp run.sh $out/bin
@@ -272,7 +282,8 @@
               "https://www.qemu-advent-calendar.org/2020/download/day15.tar.gz";
             hash = "sha256-+jx/hTex1iLvLeUUBNyT49GPRZg3Vg6E+uSgDNmUYuQ=";
           };
-          nativeBuildInputs = [ qemu makeWrapper ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/{bin,share}
             substituteInPlace ./run.sh --replace file=snow.bin file=\"$out/share/snow.bin\",snapshot=on
@@ -296,7 +307,8 @@
             url = "https://eldondev.com/openwrt-privoxy-qcow.img";
             hash = "";
           };
-          nativeBuildInputs = [ qemu makeWrapper ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/{bin,share}
             substituteInPlace ./run.sh --replace \
@@ -318,7 +330,8 @@
               "https://www.qemu-advent-calendar.org/2020/download/day17.tar.gz";
             hash = "sha256-UlJGX1hUpDkD6s+3KC50cOYGPu06diSraNl3L2rhqEE=";
           };
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
             cp * $out/bin
@@ -335,7 +348,8 @@
               "http://www.qemu-advent-calendar.org/2020/download/day18.tar.gz";
             hash = "sha256-kulrXZ29fLHAHltSY2sXOXBvbzCUOX5kvfzKivcHjmU=";
           };
-          nativeBuildInputs = [ makeWrapper qemu ];
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
 
           installPhase = ''
             mkdir -p $out/{bin,share}
@@ -355,8 +369,8 @@
               "https://www.qemu-advent-calendar.org/2020/download/day19.tar.gz";
             hash = "sha256-hfx891OeYSjy0+aaQrVkxvKgM2483yR73ldRrLAvfZ0=";
           };
-          buildInputs = [ makeWrapper ];
           patches = [ ./19patch ];
+          buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
@@ -375,7 +389,6 @@
             hash = "sha256-yzMh37u97W/YuCztRAN9lHqBCn4CreVdynAKNAd5q6c=";
           };
           buildInputs = [ makeWrapper ];
-          patches = [ ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
@@ -395,7 +408,6 @@
             hash = "sha256-MNXqSjn3L1EKZszREibmTov/MnjKGtHNh6YjbkTgP8I=";
           };
           buildInputs = [ makeWrapper ];
-          patches = [ ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
             mkdir -p $out/bin
@@ -470,105 +482,30 @@
 
     in {
       apps.${system} = {
-        day01 = {
-          program = "${day01}/bin/run.sh";
-          type = "app";
-          description = "snake game in 893 bytes";
-        };
-        day03 = {
-          program = "${day03}/bin/run.sh";
-          type = "app";
-          description = "donkey bas in MSDOS basic";
-        };
-        day04 = {
-          program = "${day04}/bin/run.sh";
-          type = "app";
-          description =
-            "bootRogue, a roguelike game that fits in a boot sector (511 bytes) by Oscar Toledo G.";
-        };
-        day05 = {
-          program = "${day05}/bin/run.sh";
-          type = "app";
-          description =
-            "lights, a memory game that fits in a boot sector (512 bytes) by Oscar Toledo G.";
-        };
-        day06 = {
-          program = "${day06}/bin/run.sh";
-          type = "app";
-          description =
-            "BootMine, Bootable minesweeper game in a 512-byte boot sector by BLevy";
-        };
-        day07 = {
-          program = "${day07}/bin/run.sh";
-          type = "app";
-        };
-        day08 = {
-          program = "${day08}/bin/run.sh";
-          type = "app";
-        };
-        day09 = {
-          program = "${day09}/bin/run.sh";
-          type = "app";
-        };
-        day11 = {
-          program = "${day11}/bin/milkmist";
-          type = "app";
-        };
-        day12 = {
-          program = "${day12}/bin/run.sh";
-          type = "app";
-        };
-        day13 = {
-          program = "${day13}/bin/run.sh";
-          type = "app";
-        };
-        day14 = {
-          program = "${day14}/bin/run.sh";
-          type = "app";
-        };
-        day15 = {
-          program = "${day15}/bin/run.sh";
-          type = "app";
-        };
-        day16 = {
-          program = "${day16}/bin/run.sh";
-          type = "app";
-        };
-        day17 = {
-          program = "${day17}/bin/run.sh";
-          type = "app";
-        };
-        day18 = {
-          program = "${day18}/bin/run.sh";
-          type = "app";
-        };
-        day19 = {
-          program = "${day19}/bin/run.sh";
-          type = "app";
-        };
-        day20 = {
-          program = "${day20}/bin/run.sh";
-          type = "app";
-        };
-        day21 = {
-          program = "${day21}/bin/run.sh";
-          type = "app";
-        };
-        day22 = {
-          program = "${day22}/bin/run.sh";
-          type = "app";
-        };
-        day23 = {
-          program = "${day23}/bin/run.sh";
-          type = "app";
-        };
-        day24 = {
-          program = "${day24}/bin/run.sh";
-          type = "app";
-        };
+        day01 = makeapp "${day01}";
+        day03 = makeapp "${day03}";
+        day04 = makeapp "${day04}";
+        day05 = makeapp "${day05}";
+        day06 = makeapp "${day06}";
+        day07 = makeapp "${day07}";
+        day08 = makeapp "${day08}";
+        day09 = makeapp "${day09}";
+        day11 = makeapp "${day11}";
+        day12 = makeapp "${day12}";
+        day13 = makeapp "${day13}";
+        day14 = makeapp "${day14}";
+        day15 = makeapp "${day15}";
+        day16 = makeapp "${day16}";
+        day17 = makeapp "${day17}";
+        day18 = makeapp "${day18}";
+        day19 = makeapp "${day19}";
+        day20 = makeapp "${day20}";
+        day21 = makeapp "${day21}";
+        day22 = makeapp "${day22}";
+        day23 = makeapp "${day23}";
+        day24 = makeapp "${day24}";
       };
-
       packages.${system} = { };
-      devShells.${system} = { default = day18; };
+      devShells.${system} = { };
     };
 }
