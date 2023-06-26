@@ -272,6 +272,88 @@
           '';
         };
 
+      day16 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day16";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day16.tar.gz";
+            hash = "sha256-p333yL8t5GGw8zvadWz2fDFEMMJ45049QYEPIYSSdug=";
+          };
+          img = fetchurl {
+            url = "https://eldondev.com/openwrt-privoxy-qcow.img";
+            hash = "";
+          };
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/{bin,share}
+            substituteInPlace ./run.sh --replace \
+            file=openwrt-privoxy-qcow.img \
+            file=\"$out/share/openwrt-privoxy-qcow.img\",snapshot=on
+            cp run.sh $out/bin
+            cp README $out/bin
+            cp openwrt-privoxy-qcow.img $out/share
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
+      day17 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day17";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day17.tar.gz";
+            hash = "sha256-UlJGX1hUpDkD6s+3KC50cOYGPu06diSraNl3L2rhqEE=";
+          };
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            cp * $out/bin
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
+      day18 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day18";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day17.tar.gz";
+            hash = "sha256-UlJGX1hUpDkD6s+3KC50cOYGPu06diSraNl3L2rhqEE=";
+          };
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            cp * $out/bin
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
+      day19 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day19";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day19.tar.gz";
+            hash = "sha256-hfx891OeYSjy0+aaQrVkxvKgM2483yR73ldRrLAvfZ0=";
+          };
+          buildInputs = [ makeWrapper ];
+          patches = [ ./19patch ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/bin
+            cp * $out/bin
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
     in {
       apps.${system} = {
         day01 = {
@@ -310,29 +392,21 @@
         day07 = {
           program = "${day07}/run.sh";
           type = "app";
-          description =
-            "Visopsys is a hobby graphical, network-capable alternative operating system released under the GPL.";
         };
 
         day08 = {
           program = "${day08}/run.sh";
           type = "app";
-          description =
-            "Fountain.bin is a demo created as an entry into an irc floppy assembly demo contest.";
         };
 
         day09 = {
           program = "${day09}/bin/run.sh";
           type = "app";
-          description = ''
-            Incredible ray-tracing demo in a QEMU "data disk" in a boot loader'';
         };
 
         day11 = {
           program = "${day11}/bin/milkmist";
           type = "app";
-          description =
-            "Say good bye to LM32 (a target that has been marked as deprecated) by running the Flickernoise GUI a last time before the LM32 code gets removed.";
         };
         day12 = {
           program = "${day12}/bin/day12";
@@ -350,9 +424,21 @@
           program = "${day15}/bin/run.sh";
           type = "app";
         };
+        day17 = {
+          program = "${day17}/bin/run.sh";
+          type = "app";
+        };
+        day18 = {
+          program = "${day18}/bin/run.sh";
+          type = "app";
+        };
+        day19 = {
+          program = "${day19}/bin/run.sh";
+          type = "app";
+        };
       };
 
       packages.${system} = { };
-      devShells.${system} = { default = day15; };
+      devShells.${system} = { default = day19; };
     };
 }

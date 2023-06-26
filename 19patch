@@ -1,0 +1,11 @@
+diff --git a/run.sh b/run.sh
+index 76a8960..adf8dc7 100755
+--- a/run.sh
++++ b/run.sh
+@@ -21,5 +21,4 @@ EOF
+     exit 1
+ fi
+
+-exec $QEMU -net none -soundhw pcspk \
+-           -drive file="$sdir"/AFLAtoxin.bin,format=raw,if=floppy
++exec $QEMU -net none -drive format=raw,file="$sdir"/AFLAtoxin.bin -device ich9-intel-hda -snapshot
