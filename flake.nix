@@ -230,6 +230,27 @@
           '';
         };
 
+      day14 = with pkgs;
+        stdenv.mkDerivation rec {
+          name = "day14";
+          src = fetchurl {
+            url =
+              "https://www.qemu-advent-calendar.org/2020/download/day14.tar.xz";
+            hash = "sha256-pAAorZbNUiW1gaXxOoQhb5uIgHPkr1g1105woCMVvFM=";
+          };
+          buildInputs = [ makeWrapper ];
+          nativeBuildInputs = [ qemu ];
+          installPhase = ''
+            mkdir -p $out/{bin,share}
+            substituteInPlace ./run.sh --replace file=eggos.img file=\"$out/share/eggos.img\",snapshot=on
+            cp run.sh $out/bin
+            cp README $out/bin
+            cp eggos.img $out/share
+            wrapProgram $out/bin/run.sh \
+              --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
+          '';
+        };
+
     in {
       apps.${system} = {
         day01 = {
@@ -300,9 +321,13 @@
           program = "${day13}/bin/run.sh";
           type = "app";
         };
+        day14 = {
+          program = "${day14}/bin/run.sh";
+          type = "app";
+        };
       };
 
       packages.${system} = { };
-      devShells.${system} = { inherit day13; };
+      devShells.${system} = { default = day14; };
     };
 }
