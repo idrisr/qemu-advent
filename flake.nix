@@ -152,6 +152,27 @@
 
       day09 = with pkgs;
         stdenv.mkDerivation rec {
+          nbdkit = with pkgs;
+            stdenv.mkDerivation {
+              name = "nbdkit";
+              src = fetchFromGitLab {
+                owner = "nbdkit";
+                repo = "nbdkit";
+                rev = "3e4c1b79a72970c17cb42b21070e61ec634a38bb";
+                hash = "sha256-5ZJSwS2crjmts5s0Rk2A+g1drXkoop6Fq/qTZcB5W6Y=";
+              };
+              autoreconfPhase = "autoreconf -i";
+              configureFlags = [
+                "--without-manpages"
+                "--without-ssh"
+                "--without-gnutls"
+                "--disable-perl"
+              ];
+              postPatch = "patchShebangs .";
+              nativeBuildInputs =
+                [ autoconf automake autoreconfHook libtool pkg-config python3 ];
+            };
+
           name = "2020 qemu-advent-day09";
           src = fetchurl {
             url =
@@ -167,6 +188,20 @@
               --prefix PATH : "${lib.makeBinPath nativeBuildInputs}"
           '';
         };
+
+      day11 = let
+        img = pkgs.fetchurl {
+          hash = "sha256-ZOI+V+/85gKzKnPRbUDQ0ZUnvdJ03IirGatoVJYr/bU=";
+          url = "http://milkymist.walle.cc/updates/2012-03-01/flickernoise";
+        };
+      in pkgs.writeShellApplication {
+        name = "milkmist";
+        runtimeInputs =
+          [ (pkgs52.qemu.override { hostCpuTargets = [ "lm32-softmmu" ]; }) ];
+        text = ''
+          qemu-system-lm32 -M milkymist -kernel ${img}
+        '';
+      };
 
       day12 = with pkgs;
         stdenv.mkDerivation rec {
@@ -197,41 +232,6 @@
               --prefix PATH : ${lib.makeBinPath nativeBuildInputs}
           '';
         };
-
-      nbdkit = with pkgs;
-        stdenv.mkDerivation {
-          name = "nbdkit";
-          src = fetchFromGitLab {
-            owner = "nbdkit";
-            repo = "nbdkit";
-            rev = "3e4c1b79a72970c17cb42b21070e61ec634a38bb";
-            hash = "sha256-5ZJSwS2crjmts5s0Rk2A+g1drXkoop6Fq/qTZcB5W6Y=";
-          };
-          autoreconfPhase = "autoreconf -i";
-          configureFlags = [
-            "--without-manpages"
-            "--without-ssh"
-            "--without-gnutls"
-            "--disable-perl"
-          ];
-          postPatch = "patchShebangs .";
-          nativeBuildInputs =
-            [ autoconf automake autoreconfHook libtool pkg-config python3 ];
-        };
-
-      day11 = let
-        img = pkgs.fetchurl {
-          hash = "sha256-ZOI+V+/85gKzKnPRbUDQ0ZUnvdJ03IirGatoVJYr/bU=";
-          url = "http://milkymist.walle.cc/updates/2012-03-01/flickernoise";
-        };
-      in pkgs.writeShellApplication {
-        name = "milkmist";
-        runtimeInputs =
-          [ (pkgs52.qemu.override { hostCpuTargets = [ "lm32-softmmu" ]; }) ];
-        text = ''
-          qemu-system-lm32 -M milkymist -kernel ${img}
-        '';
-      };
 
       day13 = with pkgs;
         stdenv.mkDerivation rec {
