@@ -24,7 +24,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day01.tar.gz";
             hash = "sha256-joBFhVbCqibSx2r1eb9Tyme5Rgz+MiY9vARK5HnI8VU=";
           };
-          patches = [ ./01patch ];
+          patches = [ ./patches/01patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -43,7 +43,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/gw-basic.tar.xz";
             hash = "sha256-D1GSCLq7PytB1FI9i81toCbzlkZ57dA5iqHdLhx1T2U=";
           };
-          patches = [ ./03patch ];
+          patches = [ ./patches/03patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -62,7 +62,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day04.tar.gz";
             hash = "sha256-toVrFbbsZxh8BdGjzKMUyetbRAu1ktk883u7in4cY68=";
           };
-          patches = [ ./04patch ];
+          patches = [ ./patches/04patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -82,7 +82,7 @@
             hash = "sha256-ccmRndhPQFA+vaFX6AMrfWtuAS9AkHov4hrWNWuN/po=";
 
           };
-          patches = [ ./05patch ];
+          patches = [ ./patches/05patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -101,7 +101,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day06.tar.gz";
             hash = "sha256-HkhQMv6hG/61wxV6uTQDTTCYfYLMW8kl2aKQdLc56T4=";
           };
-          patches = [ ./06patch ];
+          patches = [ ./patches/06patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -120,7 +120,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day07.tar.gz";
             hash = "sha256-lnLql/1dWXvXG6ZeZAqg12WCQiacoW3G8ofgIkWVqYA=";
           };
-          patches = [ ./07patch ];
+          patches = [ ./patches/07patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -139,7 +139,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day08.tar.gz";
             hash = "sha256-qR9YAIdXuwoM9sn7jVMN/eikpBvPZ4UaB+TzFtogVfo=";
           };
-          patches = [ ./08patch ];
+          patches = [ ./patches/08patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -221,7 +221,7 @@
             file=gameoflife.bin \
             file=\"$out/share/gameoflife.bin\"
           '';
-          patches = [ ./09patch ];
+          patches = [ ./patches/09patch ];
           installPhase = ''
             mkdir -p $out/bin
             mkdir -p $out/share
@@ -241,7 +241,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day13.tar.xz";
             hash = "sha256-a8Yzob+fLaUi4fSdfDFgLaeAz+xrnqc0Igkd0V3j7F8=";
           };
-          patches = [ ./13patch ];
+          patches = [ ./patches/13patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -350,7 +350,6 @@
           };
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
-
           installPhase = ''
             mkdir -p $out/{bin,share}
             substituteInPlace run.sh --replace '-hda doom.img' "-drive file=$out/share/doom.img -snapshot"
@@ -369,7 +368,7 @@
               "https://www.qemu-advent-calendar.org/2020/download/day19.tar.gz";
             hash = "sha256-hfx891OeYSjy0+aaQrVkxvKgM2483yR73ldRrLAvfZ0=";
           };
-          patches = [ ./19patch ];
+          patches = [ ./patches/19patch ];
           buildInputs = [ makeWrapper ];
           nativeBuildInputs = [ qemu ];
           installPhase = ''
@@ -483,6 +482,7 @@
     in {
       apps.${system} = {
         day01 = makeapp "${day01}";
+        # day02 intentionally missing
         day03 = makeapp "${day03}";
         day04 = makeapp "${day04}";
         day05 = makeapp "${day05}";
@@ -490,6 +490,7 @@
         day07 = makeapp "${day07}";
         day08 = makeapp "${day08}";
         day09 = makeapp "${day09}";
+        # day10 intentionally missing
         day11 = makeapp "${day11}";
         day12 = makeapp "${day12}";
         day13 = makeapp "${day13}";
