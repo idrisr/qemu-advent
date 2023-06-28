@@ -1,0 +1,27 @@
+diff --git a/run.sh b/run.sh
+index 6d608b8..117fc40 100755
+--- a/run.sh
++++ b/run.sh
+@@ -1,23 +1,10 @@
+ #!/bin/sh
+
+ url="http://milkymist.walle.cc/updates/2012-03-01/flickernoise"
+-image="flickernoise"
+
+ sdir=`dirname $0`
+ cat "$sdir"/readme.txt
+
+-if [ ! -f "$image" ]; then
+-    echo "Downloading the image file..."
+-    if command -v curl >/dev/null 2>&1; then
+-        curl -L -o "$image" "$url" || exit
+-    elif command -v wget >/dev/null 2>&1; then
+-        wget -O "$image" "$url" || exit 1
+-    else
+-        echo "You either need 'curl' or 'wget' for the download."
+-        exit 1
+-    fi
+-fi
+-
+ if ! command -v qemu-system-lm32 >/dev/null 2>&1; then
+     cat <<EOF

@@ -43,3 +43,5 @@ nix flake show github:idrisr/qemu-advent
 * you can know nothing about a project and its language ecosystem
     * and still make a package for it
 * to get command line helpers, write yet another package
+* use --set PATH to get purity, instead of --prefix
+* be prepared to patch makefiles, bash scripts, and configs

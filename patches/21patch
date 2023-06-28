@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index 4dd8435..8090b47 100644
+--- a/run.sh
++++ b/run.sh
+@@ -22,4 +22,4 @@ EOF
+ fi
+ 
+ export QEMU
+-exec $QEMU -kernel vmlinuz -initrd initramfs.linux_amd64.cpio  -append ip=dhcp -nic user,hostfwd=tcp:127.0.0.1:10222-:22 
++exec $QEMU -kernel "$sdir"/vmlinuz -initrd "$sdir"/initramfs.linux_amd64.cpio  -append ip=dhcp -nic user,hostfwd=tcp:127.0.0.1:10222-:22

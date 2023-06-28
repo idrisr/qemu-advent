@@ -7,4 +7,4 @@ index ae191ec..7c1e139 100755
 
  export QEMU
 -exec $QEMU -hda rogue.img
-+exec $QEMU -drive file="$sdir"/rogue.img,snapshot=on,format=raw
++exec $QEMU -drive file="$sdir"/rogue.img,format=raw

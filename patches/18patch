@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index 0fe36c5..2a6d045 100755
+--- a/run.sh
++++ b/run.sh
+@@ -24,4 +24,4 @@ EOF
+ fi
+ 
+ export QEMU
+-exec $QEMU -hda doom.img
++exec $QEMU -hda "$sdir"/doom.img

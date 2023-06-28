@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index a819683..7ec8c37 100755
+--- a/run.sh
++++ b/run.sh
+@@ -22,4 +22,4 @@ EOF
+ fi
+ 
+ export QEMU
+-exec $QEMU -enable-kvm -m 1G -drive if=virtio,file=ventoy.qcow2 
++exec $QEMU -enable-kvm -m 1G -drive if=virtio,file="$sdir"/ventoy.qcow2

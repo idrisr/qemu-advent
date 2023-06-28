@@ -5,7 +5,7 @@ index 2d532c0..482ff2f 100755
 @@ -23,5 +23,4 @@ EOF
      exit 1
  fi
- 
+
 -export QEMU
 -exec $QEMU -hda fountain.bin
-+exec $QEMU -drive file="$sdir"/fountain.bin,snapshot=on,format=raw
++exec $QEMU -drive file="$sdir"/fountain.bin,format=raw

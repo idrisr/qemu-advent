@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index 66015cf..9fab4e4 100755
+--- a/run.sh
++++ b/run.sh
+@@ -22,4 +22,4 @@ EOF
+ fi
+ 
+ export QEMU
+-exec $QEMU -drive format=raw,file=gameoflife.bin
++exec $QEMU -drive format=raw,file="$sdir"/gameoflife.bin

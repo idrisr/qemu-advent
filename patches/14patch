@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index e32379c..317814f 100755
+--- a/run.sh
++++ b/run.sh
+@@ -22,4 +22,4 @@ EOF
+ fi
+ 
+ export QEMU
+-exec $QEMU -drive file=eggos.img,if=virtio -net user,hostfwd=::19220-:22  -net nic,model=e1000
++exec $QEMU -drive file="$sdir"/eggos.img,if=virtio -net user,hostfwd=::19220-:22  -net nic,model=e1000

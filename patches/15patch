@@ -1,0 +1,10 @@
+diff --git a/run.sh b/run.sh
+index 0c4aa5c..f5ce9f9 100755
+--- a/run.sh
++++ b/run.sh
+@@ -24,4 +24,4 @@ fi
+ echo "Press enter to continue"
+ read
+ export QEMU
+-exec $QEMU  -m 256M -machine q35 -serial mon:stdio -vga none -drive if=pflash,format=raw,file=snow.bin -boot a
++exec $QEMU  -m 256M -machine q35 -serial mon:stdio -vga none -drive if=pflash,format=raw,file="$sdir"/snow.bin -boot a

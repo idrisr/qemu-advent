@@ -4,7 +4,7 @@ index 1e9108d..3063375 100755
 +++ b/run.sh
 @@ -24,4 +24,4 @@ EOF
  fi
- 
+
  export QEMU
 -exec $QEMU -hda visopsys-0.9-usb.img -nic model=pcnet
-+exec $QEMU -drive file="$sdir"/visopsys-0.9-usb.img,snapshot=on,format=raw -nic model=pcnet
++exec $QEMU -drive file="$sdir"/visopsys-0.9-usb.img,format=raw -nic model=pcnet
