@@ -45,3 +45,7 @@ nix flake show github:idrisr/qemu-advent
 * to get command line helpers, write yet another package
 * use --set PATH to get purity, instead of --prefix
 * be prepared to patch makefiles, bash scripts, and configs
+* there's a sub-rosa haskell-like layer
+    * the functions for manipulating lists, attrsets, strings, etc
+    * rarely used, but powerful
+    * useful when merging attrsets with custom logic

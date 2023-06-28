@@ -34,10 +34,10 @@
               chmod +x run.sh
               mkdir -p $out/bin
               cp -r * $out/bin
-              runHook postInstall
               wrapProgram $out/bin/run.sh --set PATH "${
                 lib.makeBinPath nativeBuildInputs
               }"
+              runHook postInstall
             '';
           };
         in stdenv.mkDerivation (y // x);
