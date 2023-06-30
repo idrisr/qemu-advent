@@ -62,15 +62,16 @@
             [ autoconf automake autoreconfHook libtool pkg-config python3 ];
         };
       qemusnap = with pkgs;
-        runCommand "test" { nativeBuildInputs = [ qemu makeWrapper ]; } ''
-          mkdir -p $out/bin
-          for x in ${qemu}/bin/qemu-*; do
-            cp $x $out/bin
-          done;
-          for x in $out/bin/qemu-*; do
-            wrapProgram $x --add-flags "-snapshot"
-          done;
-        '';
+        symlinkJoin {
+          name = "qemu";
+          paths = [ qemu ];
+          buildInputs = [ makeWrapper ];
+          postBuild = ''
+            for x in $out/bin/qemu-*; do
+              wrapProgram $x --add-flags "-snapshot"
+            done;
+          '';
+        };
       day01 = stdInstall {
         name = "2020 qemu-advent-day01";
         url = "https://www.qemu-advent-calendar.org/2020/download/day01.tar.gz";
